@@ -1,5 +1,7 @@
 package ru.hogvarts.school_4_0.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +26,8 @@ public class StudentService {
     @Value("${avatars.dir.path}")
     private String avatarsDir;
 
+    Logger logger = LoggerFactory.getLogger(StudentService.class);
+
     private final StudentRepository studentRepository;
     private final AvatarRepository avatarRepository;
 
@@ -34,14 +38,17 @@ public class StudentService {
 
 
     public Student addStudent(Student student) {
+        logger.info("method called addStudent");
         return studentRepository.save(student);
     }
 
     public Student getStudent(Long id) {
+        logger.info("method called getStudent by id #" + id);
         return studentRepository.findById(id).orElse(null);
     }
 
     public Student editStudent(Long id, Student student) {
+        logger.info("method called editStudent by id #" + id);
         Optional<Student> optional = studentRepository.findById(id);
         if (optional.isPresent()) {
             Student fromDB = optional.get();
@@ -49,44 +56,54 @@ public class StudentService {
             fromDB.setAge(fromDB.getAge());
             return studentRepository.save(fromDB);
         }
+        logger.error("there is not student by id #" + id);
         return null;
     }
 
     public void deleteStudent(Long id) {
+        logger.info("method called deleteStudent by id #" + id);
         studentRepository.deleteById(id);
     }
 
     public Collection<Student> findStudentsByAge(int age) {
+        logger.info("method called findStudentsByAge by age= " +age);
         return studentRepository.findStudentsByAge(age);
     }
 
     public Collection<Student> getAll() {
+        logger.info("method called getAll students");
         return studentRepository.findAll();
     }
 
     public Collection<Student> findStudentsByAgeBetween(int min, int max) {
+        logger.info("method called findStudentsByAgeBetween");
         return studentRepository.findStudentsByAgeBetween(min, max);
     }
 
     public Integer getAmountAllStudents() {
+        logger.info("method called getAmountAllStudents");
         return studentRepository.getAmountAllStudents();
     }
 
     public Double getAvgAgeStudents() {
+        logger.info("method called getAvgAgeStudents");
         return studentRepository.getAvgAgeStudents();
     }
 
     public Collection <Student> getLastFiveStudents(){
+        logger.info("method called getLastFiveStudents");
         return studentRepository.getLastFiveStudents();
     }
 
-    public Avatar findAvatar(long studentId) {
-        return avatarRepository.findByStudentId(studentId).orElseThrow();
+    public Avatar findAvatar(long id) {
+        logger.info("method called findAvatar by id #" + id);
+        return avatarRepository.findByStudentId(id).orElseThrow();
     }
 
-    public void uploadAvatar(Long studentId, MultipartFile file) throws IOException {
-        Student student = getStudent(studentId);
-        Path filePath = Path.of(avatarsDir, studentId + "." + getExtension(file.getOriginalFilename()));
+    public void uploadAvatar(Long id, MultipartFile file) throws IOException {
+        logger.info("method called uploadAvatar by id #" + id);
+        Student student = getStudent(id);
+        Path filePath = Path.of(avatarsDir, id + "." + getExtension(file.getOriginalFilename()));
         Files.createDirectories(filePath.getParent());
         Files.deleteIfExists(filePath);
         try (InputStream is = file.getInputStream();
@@ -96,7 +113,7 @@ public class StudentService {
         ) {
             bis.transferTo(bos);
         }
-        Avatar avatar = avatarRepository.findByStudentId(studentId).orElseGet(Avatar::new);
+        Avatar avatar = avatarRepository.findByStudentId(id).orElseGet(Avatar::new);
         avatar.setStudent(student);
         avatar.setFilePath(filePath.toString());
         avatar.setFileSize(file.getSize());
@@ -107,15 +124,18 @@ public class StudentService {
     }
 
     public ResponseEntity <Collection<Avatar>> getAllAvatars (Integer pageNumber, Integer pageSize){
+        logger.info("method called getAllAvatars");
         PageRequest pageRequest = PageRequest.of(pageNumber -1, pageSize);
         Collection <Avatar> avatarList = avatarRepository.findAll(pageRequest).getContent();
         if (avatarList.isEmpty()) {
+            logger.warn("avatars not found");
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(avatarList);
     }
 
     private String getExtension(String fileName) {
+        logger.info("method called getExtension");
         return fileName.substring(fileName.indexOf("." + 1));
     }
 }

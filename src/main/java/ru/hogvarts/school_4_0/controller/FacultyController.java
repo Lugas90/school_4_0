@@ -3,7 +3,7 @@ package ru.hogvarts.school_4_0.controller;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.hogvarts.school_4_0.model.Faculty;
-import ru.hogvarts.school_4_0.service.FacultyService;
+import ru.hogvarts.school_4_0.service.FacultyServiceInterface;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -12,9 +12,9 @@ import java.util.Collections;
 @RequestMapping("/faculty")
 public class FacultyController {
 
-    private final FacultyService facultyService;
+    private final FacultyServiceInterface facultyService;
 
-    public FacultyController(FacultyService facultyService) {
+    public FacultyController(FacultyServiceInterface facultyService) {
         this.facultyService = facultyService;
     }
 
