@@ -2,7 +2,6 @@ package ru.hogvarts.school_4_0.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import ru.hogvarts.school_4_0.model.Faculty;
 import ru.hogvarts.school_4_0.repository.FacultyRepository;
@@ -11,8 +10,7 @@ import java.util.Collection;
 import java.util.Optional;
 
 @Service
-@Profile("production")
-public class FacultyService implements FacultyServiceInterface {
+public class FacultyService {
     private final FacultyRepository facultyRepository;
 
     public FacultyService(FacultyRepository facultyRepository) {
