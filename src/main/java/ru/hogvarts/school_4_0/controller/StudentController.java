@@ -146,4 +146,14 @@ public class StudentController {
     public Double allAvgAge() {
         return studentService.allAvgAge();
     }
+
+    @GetMapping("/getAllForThreads")
+    public void getAllForThreads() {
+        studentService.getAllForThreads();
+    }
+
+    @GetMapping("/getAllForThreadsSynchronized")
+    public void getAllForThreadsSynchronized() {
+        studentService.getAllForThreadsSynchronized();
+    }
 }

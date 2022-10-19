@@ -158,4 +158,43 @@ public class StudentService {
                 .average()
                 .orElse(0);
     }
+
+    public void getAllForThreads() {
+        logger.info("Start method getAllForThreads");
+        System.out.println(getStudent(1L));
+        System.out.println(getStudent(2L));
+
+        Thread thread1 = new Thread(() -> {
+            System.out.println(getStudent(3L));
+            System.out.println(getStudent(4L));
+        });
+        thread1.start();
+
+        Thread thread2 = new Thread(() -> {
+            System.out.println(getStudent(5L));
+            System.out.println(getStudent(6L));
+        });
+        thread2.start();
+    }
+
+    public void getAllForThreadsSynchronized() {
+        logger.info("Start method getAllForThreadsSynchronized");
+        synchronized (Student.class) {
+
+            System.out.println(getStudent(1L));
+            System.out.println(getStudent(2L));
+
+            Thread thread1 = new Thread(() -> {
+                System.out.println(getStudent(3L));
+                System.out.println(getStudent(4L));
+            });
+            thread1.start();
+
+            Thread thread2 = new Thread(() -> {
+                System.out.println(getStudent(5L));
+                System.out.println(getStudent(6L));
+            });
+            thread2.start();
+        }
+    }
 }
