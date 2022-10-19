@@ -7,6 +7,7 @@ import ru.hogvarts.school_4_0.model.Faculty;
 import ru.hogvarts.school_4_0.repository.FacultyRepository;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Optional;
 
 @Service
@@ -60,5 +61,13 @@ public class FacultyService {
     public Collection<Faculty> findFacultyByColorIgnoreCaseOrNameIgnoreCase(String color, String name) {
         logger.info("method called findFacultyByColorIgnoreCaseOrNameIgnoreCase by color " + color + "and name " + name);
         return facultyRepository.findFacultyByColorIgnoreCaseOrNameIgnoreCase(color, name);
+    }
+
+    public String getMaxLongFacultyName() {
+        Optional <String> longName = facultyRepository.findAll()
+                .stream()
+                .map(faculty -> faculty.getName())
+                .max(Comparator.comparingInt(String::length));
+        return longName.get();
     }
 }

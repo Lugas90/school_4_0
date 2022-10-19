@@ -18,6 +18,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 @RestController
 @RequestMapping("/student")
@@ -134,7 +135,15 @@ public class StudentController {
     public ResponseEntity <Collection<Avatar>> getAllAvatars(@RequestParam ("page") Integer pageNumber,
                                                              @RequestParam ("size") Integer pageSize){
         return studentService.getAllAvatars(pageNumber, pageSize);
+    }
 
+    @GetMapping("/getStudentWithLetterM")
+    public ResponseEntity <List<String>> getStudentWithLetterM (){
+       return ResponseEntity.ok(studentService.getStudentWithLetterM());
+    }
 
+    @GetMapping("/allAvgAge")
+    public Double allAvgAge() {
+        return studentService.allAvgAge();
     }
 }

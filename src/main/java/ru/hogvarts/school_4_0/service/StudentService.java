@@ -16,7 +16,9 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static java.nio.file.StandardOpenOption.CREATE_NEW;
 
@@ -66,7 +68,7 @@ public class StudentService {
     }
 
     public Collection<Student> findStudentsByAge(int age) {
-        logger.info("method called findStudentsByAge by age= " +age);
+        logger.info("method called findStudentsByAge by age= " + age);
         return studentRepository.findStudentsByAge(age);
     }
 
@@ -90,7 +92,7 @@ public class StudentService {
         return studentRepository.getAvgAgeStudents();
     }
 
-    public Collection <Student> getLastFiveStudents(){
+    public Collection<Student> getLastFiveStudents() {
         logger.info("method called getLastFiveStudents");
         return studentRepository.getLastFiveStudents();
     }
@@ -123,10 +125,10 @@ public class StudentService {
         avatarRepository.save(avatar);
     }
 
-    public ResponseEntity <Collection<Avatar>> getAllAvatars (Integer pageNumber, Integer pageSize){
+    public ResponseEntity<Collection<Avatar>> getAllAvatars(Integer pageNumber, Integer pageSize) {
         logger.info("method called getAllAvatars");
-        PageRequest pageRequest = PageRequest.of(pageNumber -1, pageSize);
-        Collection <Avatar> avatarList = avatarRepository.findAll(pageRequest).getContent();
+        PageRequest pageRequest = PageRequest.of(pageNumber - 1, pageSize);
+        Collection<Avatar> avatarList = avatarRepository.findAll(pageRequest).getContent();
         if (avatarList.isEmpty()) {
             logger.warn("avatars not found");
             return ResponseEntity.notFound().build();
@@ -137,5 +139,23 @@ public class StudentService {
     private String getExtension(String fileName) {
         logger.info("method called getExtension");
         return fileName.substring(fileName.indexOf("." + 1));
+    }
+
+    public List<String> getStudentWithLetterM() {
+        List<String> st =
+                studentRepository.findAll().stream()
+                        .map(student -> student.getName())
+                        .filter(s -> s.startsWith("M"))
+                        .sorted((s1, s2) -> s1.compareTo(s2))
+                        .map(s -> s.toUpperCase())
+                        .collect(Collectors.toList());
+        return st;
+    }
+
+    public Double allAvgAge() {
+        return studentRepository.findAll().stream()
+                .mapToInt(student -> student.getAge())
+                .average()
+                .orElse(0);
     }
 }
