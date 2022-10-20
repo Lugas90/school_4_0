@@ -161,40 +161,44 @@ public class StudentService {
 
     public void getAllForThreads() {
         logger.info("Start method getAllForThreads");
-        System.out.println(getStudent(1L));
-        System.out.println(getStudent(2L));
+        getStudent(1L);
+        getStudent(2L);
 
         Thread thread1 = new Thread(() -> {
-            System.out.println(getStudent(3L));
-            System.out.println(getStudent(4L));
+            getStudent(3L);
+            getStudent(4L);
         });
         thread1.start();
 
         Thread thread2 = new Thread(() -> {
-            System.out.println(getStudent(5L));
-            System.out.println(getStudent(6L));
+            getStudent(5L);
+            getStudent(6L);
         });
         thread2.start();
     }
 
     public void getAllForThreadsSynchronized() {
         logger.info("Start method getAllForThreadsSynchronized");
-        synchronized (Student.class) {
+        synchronized (this) {
+            getStudent(1L);
+            getStudent(2L);
+        }
 
-            System.out.println(getStudent(1L));
-            System.out.println(getStudent(2L));
-
+        synchronized (this) {
             Thread thread1 = new Thread(() -> {
-                System.out.println(getStudent(3L));
-                System.out.println(getStudent(4L));
+                getStudent(3L);
+                getStudent(4L);
             });
             thread1.start();
+        }
 
+        synchronized (this) {
             Thread thread2 = new Thread(() -> {
-                System.out.println(getStudent(5L));
-                System.out.println(getStudent(6L));
+                getStudent(5L);
+                getStudent(6L);
             });
             thread2.start();
         }
+
     }
 }
