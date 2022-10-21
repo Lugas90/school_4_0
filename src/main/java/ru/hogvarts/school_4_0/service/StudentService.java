@@ -177,28 +177,20 @@ public class StudentService {
         thread2.start();
     }
 
+    private synchronized void getAllForThreadsSynchronized(List<Student> students) {
+        for (Student student : students) {
+            logger.info(student.getName());
+        }
+    }
+
     public void getAllForThreadsSynchronized() {
         logger.info("Start method getAllForThreadsSynchronized");
-        synchronized (this) {
-            getStudent(1L);
-            getStudent(2L);
-        }
 
-        synchronized (this) {
-            Thread thread1 = new Thread(() -> {
-                getStudent(3L);
-                getStudent(4L);
-            });
-            thread1.start();
-        }
+        List <Student> students = studentRepository.findAll(PageRequest.of(0,6)).getContent();
 
-        synchronized (this) {
-            Thread thread2 = new Thread(() -> {
-                getStudent(5L);
-                getStudent(6L);
-            });
-            thread2.start();
-        }
+        getAllForThreadsSynchronized(students.subList(0, 2));
+        new Thread(() -> getAllForThreadsSynchronized(students.subList(2, 4)));
+        new Thread(() -> getAllForThreadsSynchronized(students.subList(4, 6)));
 
     }
 }
